@@ -6,6 +6,10 @@ AI-powered educational content pipeline using two agents:
 2. **Reviewer Agent** — evaluates the output for age-appropriateness, correctness, and clarity  
 3. **Refinement** — if the reviewer fails the content, the generator re-runs with feedback (1 pass)
 
+## UI:
+<img width="2747" height="1248" alt="image" src="https://github.com/user-attachments/assets/fe64213d-c1fe-4a50-a4f6-004a8c78451c" />
+
+
 ## Setup
 
 ```bash
