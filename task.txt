@@ -1,0 +1,82 @@
+AI Assessment : Agent-Based,
+UI-Driven
+Core Requirement (Explicit)
+You must implement two AI agents:
+1. Generator Agent
+2. Reviewer Agent
+Each agent must:
+●
+Have a clear responsibility
+●
+Accept structured input
+●
+Produce structured output
+You do not need a full agent framework—simple Python classes or functions are sufficient.
+Agent Definitions
+1. Generator Agent
+Responsibility:
+Generate draft educational content for a given grade and topic.
+Input:
+{
+"grade": 4,
+"topic": "Types of angles"
+}
+Output (Structured):
+{
+"explanation": "...",
+"mcqs": [
+{
+"question": "...",
+"options": ["A", "B", "C", "D"],
+"answer": "B"
+}
+]
+}
+Expectations:
+●
+Language must match the grade
+●
+Concepts must be correct
+●
+Output must be deterministic in structure
+2. Reviewer Agent
+Responsibility:
+Evaluate the Generator’s output.
+Input:
+●
+Content JSON from Generator Agent
+Output (Structured):
+{
+"status": "pass | fail",
+"feedback": [
+ "Sentence 2 is too complex for Grade 4",
+"Question 3 tests a concept not introduced"
+]
+}
+Evaluation Criteria:
+●
+Age appropriateness
+●
+Conceptual correctness
+●
+Clarity
+Refinement Logic (Lightweight)
+If the Reviewer returns fail:
+●
+Re-run the Generator with the feedback embedded
+●
+Limit to one refinement pass
+This can be implemented inline; it does not need a separate Refiner agent.
+UI Integration (Mandatory)
+The UI must:
+●
+Trigger the agent pipeline
+●
+Display:
+○
+Generator output
+○
+Reviewer feedback
+○
+Refined output (if applicable)
+The UI should make the agent flow obvious.
