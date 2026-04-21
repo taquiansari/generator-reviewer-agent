@@ -1,7 +1,7 @@
 """
 Generator and Reviewer AI Agents for educational content.
 
-Uses Google Gemini API to generate and review grade-appropriate
+Uses Groq API (free) to generate and review grade-appropriate
 educational content with structured JSON output.
 """
 
@@ -9,22 +9,34 @@ import json
 import os
 import re
 
-from google import genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
-MODEL = "gemini-2.5-flash"
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+MODEL = "llama-3.3-70b-versatile"
 
 
 def _extract_json(text: str) -> dict:
     """Extract JSON from LLM response text, handling markdown fences."""
-    # Try to find JSON inside ```json ... ``` blocks
     match = re.search(r"```(?:json)?\s*\n?(.*?)```", text, re.DOTALL)
     if match:
         text = match.group(1).strip()
     return json.loads(text)
+
+
+def _chat(system: str, user: str, temperature: float = 0.7) -> str:
+    """Send a chat completion request to Groq and return the response text."""
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        temperature=temperature,
+    )
+    return response.choices[0].message.content
 
 
 class GeneratorAgent:
@@ -63,16 +75,7 @@ class GeneratorAgent:
                 + "\n".join(f"- {f}" for f in feedback)
             )
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=user_msg,
-            config={
-                "system_instruction": self.SYSTEM_PROMPT,
-                "temperature": 0.7,
-            },
-        )
-
-        return _extract_json(response.text)
+        return _extract_json(_chat(self.SYSTEM_PROMPT, user_msg, temperature=0.7))
 
 
 class ReviewerAgent:
@@ -111,16 +114,7 @@ class ReviewerAgent:
             f"Content to review:\n{json.dumps(content, indent=2)}"
         )
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=user_msg,
-            config={
-                "system_instruction": self.SYSTEM_PROMPT,
-                "temperature": 0.3,
-            },
-        )
-
-        return _extract_json(response.text)
+        return _extract_json(_chat(self.SYSTEM_PROMPT, user_msg, temperature=0.3))
 
 
 def run_pipeline(grade: int, topic: str) -> dict:

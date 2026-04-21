@@ -12,10 +12,10 @@ AI-powered educational content pipeline using two agents:
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Create a .env file with your Google Gemini API key
+# 2. Create a .env file with your Groq API key (free)
 cp .env.example .env
 # Edit .env and replace "your_api_key_here" with your actual key
-# Get a free key at https://aistudio.google.com/
+# Get a free key at https://console.groq.com/
 
 # 3. Run the app
 uvicorn app:app --reload
